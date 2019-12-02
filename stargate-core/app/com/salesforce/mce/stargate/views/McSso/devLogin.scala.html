@@ -1,0 +1,22 @@
+@import com.salesforce.mce.stargate.views.html.main
+
+@(isLoggedIn: Boolean, mockJwt: String)
+
+@main("Stargate Dev Login") {
+  <h1>Stargate Dev Login Form for simulating MC SSO</h1>
+
+  @if(isLoggedIn) {
+    <p>You have a valid session now.</p>
+  } else {
+    <p>You are not logged in yet.</p>
+  }
+  <p></p>
+
+  <form method="post" action="@com.salesforce.mce.stargate.controllers.routes.McSsoController.devLoginSubmit" class="dev-login-form">
+    <label for="dev-login-jwt">Mock JWT Payload:</label>
+    <br />
+    <textarea id="dev-login-jwt" name="jwt" rows="35" cols="100">@mockJwt</textarea>
+    <br />
+    <input type="submit" value="Login" />
+  </form>
+}

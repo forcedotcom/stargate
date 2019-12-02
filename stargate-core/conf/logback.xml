@@ -1,0 +1,18 @@
+<configuration>
+
+  <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%coloredLevel %d{HH:mm:ss.SSS} %-40logger{40} | %message%n%xException{10}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Seems that stats are tied to this -->
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+  </root>
+
+  <logger name="controllers" level="DEBUG" />
+  <logger name="services" level="DEBUG" />
+</configuration>

@@ -8,7 +8,7 @@ Stargate is a Play Scala Module that adds API endpoints to your app to enable in
 ## How to Add Stargate to Your Play Scala App
 
 1.
-	
+
 	```scala
 	libraryDependencies += "com.salesforce.mce" %% "stargate-redis" % "_VERSION_"
 	// or
@@ -52,39 +52,33 @@ and override `postLoginCallback` method (see `McSsoControllerSpec` for example).
 
 ## Development Setup
 
-1.
-	Clone repository.
+1. Clone repository.
 
 	```shell
 	$ git clone git@github.com:forcedotcom/stargate.git
 	```
 
-1.
-	Change directory.
+1. Change directory.
 
 	```shell
 	$ cd stargate
 	```
 
-1.
-	Set up redis cluster with docker.
+1. Set up redis cluster with docker.
 
 	```shell
 	$ docker run  -e "IP=0.0.0.0" -p7000:7000 -p7001:7001 -p7002:7002 --hostname redis-cluster  grokzen/redis-cluster:latest
 	```
 
-1.
-	Run Play app server.
+1. Run Play app server.
 
 	```shell
 	$ sbt ~run
 	```
 
-1.
-	Visit [http://localhost:9000/sso/mc/dev-login](http://localhost:9000/sso/mc/dev-login) to view mock login page.
+1. Visit [http://localhost:9000/sso/mc/dev-login](http://localhost:9000/sso/mc/dev-login) to view mock login page.
 
-1.
-	Run automated tests.
+1. Run automated tests.
 
 	```shell
 	$ sbt test

@@ -54,6 +54,8 @@ lazy val publishSettings = Seq(
   )
 )
 
+usePgpKeyHex("78E1303DEC91DF340A88BDAE61127F8D79559F98")
+
 lazy val commonSettings = Seq(
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2018, salesforce.com, inc.

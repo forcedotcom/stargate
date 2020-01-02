@@ -48,7 +48,7 @@ jobs:
     steps:
       - checkout
       - run: echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes
-      - run: sbt +publishSigned sonatypeReleaseAll
+      - run: GPG_TTY=$(tty) sbt +publishSigned sonatypeReleaseAll
 
 workflows:
   version: 2

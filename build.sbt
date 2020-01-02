@@ -7,6 +7,53 @@ val ci = sys.env.getOrElse("CI", "false").toBoolean
 
 val testEnv = if (ci) "ci" else "test"
 
+lazy val publishSettings = Seq(
+  organization := "com.salesforce.mce",
+  organizationName := "Salesforce Marketing Cloud Einstein",
+  organizationHomepage := Some(url("https://www.salesforce.com")),
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/forcedotcom/stargate"),
+      "scm:git@github.com:forcedotcom/stargate.git"
+    )
+  ),
+  developers := List(
+    Developer(
+      id    = "sushengloong",
+      name  = "Sheng-Loong Su",
+      email = "shengloong.su@salesforce.com",
+      url   = url("http://github.com/sushengloong")
+    ),
+    Developer(
+      id    = "",
+      name  = "Trent Albright",
+      email = "talbright@salesforce.com",
+      url   = url("https://github.com/talbright")
+    ),
+    Developer(
+      id    = "realstraw",
+      name  = "Kexin Xie",
+      email = "kexin.xie@salesforce.com",
+      url   = url("http://github.com/realstraw")
+    )
+  ),
+  licenses := List("BSD-3-Clause" -> new URL("https://opensource.org/licenses/BSD-3-Clause")),
+  homepage := Some(url("https://github.com/forcedotcom/stargate")),
+  pomIncludeRepository := { _ => false },
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  },
+  publishMavenStyle := true,
+  credentials += Credentials(
+    "Sonatype Nexus Repository Manager",
+    "oss.sonatype.org",
+    sys.env.getOrElse("SONATYPE_USERNAME",""),
+    sys.env.getOrElse("SONATYPE_PASSWORD","")
+  )
+)
+
 lazy val commonSettings = Seq(
   headerLicense := Some(HeaderLicense.Custom(
     """|Copyright (c) 2018, salesforce.com, inc.
@@ -43,7 +90,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-infer-any"
   ),
   doc in Compile := target.map(_ / "none").value
-)
+) ++ publishSettings
 
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).

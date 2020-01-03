@@ -1,4 +1,6 @@
-## Stargate
+# Stargate
+
+[![CircleCI](https://circleci.com/gh/forcedotcom/stargate.svg?style=svg)](https://circleci.com/gh/forcedotcom/stargate)
 
 > "It was a small outpost: a nexus, assimilator, and a couple of gateways." -- Flight Sergeant Aaron Keebler
 > The stargate is an advanced protoss structure.

@@ -5,7 +5,7 @@
 > "It was a small outpost: a nexus, assimilator, and a couple of gateways." -- Flight Sergeant Aaron Keebler
 > The stargate is an advanced protoss structure.
 
-Stargate is a Play Scala Module that adds API endpoints to your app to enable integration with Salesforce Marketing Cloud Single Sign On.
+Stargate is a Play Scala Module that adds API endpoints to your app to enable integration with Salesforce Marketing Cloud Single Sign On. Redis is required to persist the session.
 
 ## How to Add Stargate to Your Play Scala App
 
@@ -18,8 +18,8 @@ Stargate is a Play Scala Module that adds API endpoints to your app to enable in
 	```
 
 1.
-	Add default Stargate configuration in `application.conf`.
-	Make sure you set the `STARGATE_MC_SECRET_KEY` Heroku config variable.
+	Add default Stargate configuration in `application.conf`. Make sure to set
+`STARGATE_MC_SECRET_KEY` and `PLAY_SECRET`.
 
 	```scala
 	include "stargate.default.conf"

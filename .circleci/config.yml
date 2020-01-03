@@ -47,7 +47,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - run: echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes
+      - run: gpg --version && (echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes) && gpg --list-secret-keys
       - run: GPG_TTY=$(tty) sbt +publishSigned sonatypeReleaseAll
 
 workflows:

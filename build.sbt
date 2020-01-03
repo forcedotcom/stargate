@@ -40,11 +40,7 @@ lazy val publishSettings = Seq(
   licenses := List("BSD-3-Clause" -> new URL("https://opensource.org/licenses/BSD-3-Clause")),
   homepage := Some(url("https://github.com/forcedotcom/stargate")),
   pomIncludeRepository := { _ => false },
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+  publishTo := sonatypePublishToBundle.value,
   publishMavenStyle := true,
   credentials += Credentials(
     "Sonatype Nexus Repository Manager",
@@ -96,7 +92,10 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
-  settings(name := "stargate").
+  settings(
+    name := "stargate",
+    skip in publish := true
+  ).
   aggregate(core, redis)
 
 lazy val core = (project in file("stargate-core")).

@@ -47,10 +47,9 @@ lazy val publishSettings = Seq(
     "oss.sonatype.org",
     sys.env.getOrElse("SONATYPE_USERNAME",""),
     sys.env.getOrElse("SONATYPE_PASSWORD","")
-  )
+  ),
+  useGpgPinentry := true
 )
-
-usePgpKeyHex("78E1303DEC91DF340A88BDAE61127F8D79559F98")
 
 lazy val commonSettings = Seq(
   headerLicense := Some(HeaderLicense.Custom(

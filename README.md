@@ -1,8 +1,9 @@
 # Stargate
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.salesforce.mce/stargate-redis_2.12.svg?colorB=blue)](https://search.maven.org/search?q=a:stargate-redis_2.12)
 [![CircleCI](https://circleci.com/gh/forcedotcom/stargate.svg?style=svg)](https://circleci.com/gh/forcedotcom/stargate)
 
-> "It was a small outpost: a nexus, assimilator, and a couple of gateways." -- Flight Sergeant Aaron Keebler
+> "It was a small outpost: a nexus, assimilator, and a couple of gateways." &mdash; <cite>Flight Sergeant Aaron Keebler</cite>.
 > The stargate is an advanced protoss structure.
 
 Stargate is a Play Scala Module that adds API endpoints to your app to enable integration with Salesforce Marketing Cloud Single Sign On. Redis is required to persist the session.

@@ -66,10 +66,10 @@ Set up redis cluster with docker.
 $ docker run  -e "IP=0.0.0.0" -p7000:7000 -p7001:7001 -p7002:7002 --hostname redis-cluster  grokzen/redis-cluster:latest
 ```
 
-Run Play app server.
+Run Play app server in the redis module.
 
 ```shell
-$ sbt ~run
+$ sbt ~redis/run
 ```
 
 Visit [http://localhost:9000/sso/mc/dev-login](http://localhost:9000/sso/mc/dev-login) to view mock login page.

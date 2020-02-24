@@ -119,6 +119,8 @@ lazy val redis = (project in file("stargate-redis")).
     name := "stargate-redis",
     description := "Stargate Scala Play module with Redis as session store",
 
+    javaOptions += "-Dconfig.resource=stargate-redis.default.conf",
+
     libraryDependencies ++= Seq(
       jedis
     ),

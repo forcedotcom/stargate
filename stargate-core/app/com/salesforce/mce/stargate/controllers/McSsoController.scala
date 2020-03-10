@@ -52,8 +52,10 @@ class McSsoController @Inject() (
       id <- request.session.data.get("id")
     } yield (mid.toLong, userId.toLong, id)
 
-    data.fold(Future.successful(Ok.withNewSession)) { case (mid, userId, id) =>
-      sessionTrackingService.destroy(mid, userId, id).map(_ => Ok.withNewSession)
+    val result = Ok.withCookies(Cookie(name = "PLAY_SESSION", value = "", secure = true, sameSite = Some(Cookie.SameSite.None)))
+    data.fold(Future.successful(result)) { case (mid, userId, id) =>
+      sessionTrackingService.destroy(mid, userId, id).map(_ => result)
+
     }
   }
 

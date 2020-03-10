@@ -55,7 +55,6 @@ class McSsoController @Inject() (
     val result = Ok.withCookies(Cookie(name = "PLAY_SESSION", value = "", secure = true, sameSite = Some(Cookie.SameSite.None)))
     data.fold(Future.successful(result)) { case (mid, userId, id) =>
       sessionTrackingService.destroy(mid, userId, id).map(_ => result)
-
     }
   }
 

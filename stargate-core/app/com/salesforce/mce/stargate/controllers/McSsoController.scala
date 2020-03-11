@@ -11,15 +11,15 @@ import javax.inject.{Inject, Singleton}
 
 import scala.collection.immutable.Map
 import scala.concurrent.{ExecutionContext, Future}
-
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import play.filters.csrf.CSRFAddToken
-
 import com.salesforce.mce.stargate.models.McSsoDecodedJwt
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.utils.JwtUtil
+import com.salesforce.mce.stargate.utils.AppConfig
+import play.api.mvc.Cookie.SameSite
 
 @Singleton
 class McSsoController @Inject() (
@@ -52,7 +52,12 @@ class McSsoController @Inject() (
       id <- request.session.data.get("id")
     } yield (mid.toLong, userId.toLong, id)
 
-    val result = Ok.withCookies(Cookie(name = "PLAY_SESSION", value = "", secure = true, sameSite = Some(Cookie.SameSite.None)))
+    val result = Ok.withCookies(Cookie(
+      name = AppConfig.cookieName,
+      value = "",
+      secure = AppConfig.secure,
+      sameSite = SameSite.parse(AppConfig.sameSite)
+    ))
     data.fold(Future.successful(result)) { case (mid, userId, id) =>
       sessionTrackingService.destroy(mid, userId, id).map(_ => result)
     }

@@ -51,7 +51,13 @@ class SessionTrackingServiceRedisImpl @Inject() (config: Configuration)(implicit
     logger.info(s"""Deleting key "$key" in redis.""")
     val status = jedisCluster.del(key)
     logger.info(s"""Status reply when deleting key "$key": $status""")
-    Future.successful(status > 0)
+    if (status > 0) {
+      logger.info(s"""Successfully cleared session for key "$key".""")
+      Future.successful(true)
+    } else {
+      logger.info(s"""No session was cleared for key "$key".""")
+      Future.successful(false)
+    }
   }
 
   override def checkAndUpdateTimeout(mid: Long, userId: Long, sid: String): Future[Boolean] = {

@@ -18,8 +18,7 @@ import play.filters.csrf.CSRFAddToken
 import com.salesforce.mce.stargate.models.McSsoDecodedJwt
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.utils.JwtUtil
-import com.salesforce.mce.stargate.utils.AppConfig
-import play.api.mvc.Cookie.SameSite
+import play.api.http.SessionConfiguration
 
 @Singleton
 class McSsoController @Inject() (
@@ -52,12 +51,14 @@ class McSsoController @Inject() (
       id <- request.session.data.get("id")
     } yield (mid.toLong, userId.toLong, id)
 
-    val result = Ok.withCookies(Cookie(
-      name = AppConfig.cookieName,
+    val config = SessionConfiguration()
+    val result = Ok.withNewSession.withCookies(Cookie(
+      name = config.cookieName,
       value = "",
-      secure = AppConfig.secure,
-      sameSite = SameSite.parse(AppConfig.sameSite)
+      secure = config.secure,
+      sameSite = config.sameSite
     ))
+
     data.fold(Future.successful(result)) { case (mid, userId, id) =>
       sessionTrackingService.destroy(mid, userId, id).map(_ => result)
     }

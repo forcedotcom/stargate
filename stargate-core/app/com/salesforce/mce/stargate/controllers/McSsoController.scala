@@ -16,7 +16,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import play.filters.csrf.CSRFAddToken
-
+import play.api.http.SessionConfiguration
 import com.salesforce.mce.stargate.models.McSsoDecodedJwt
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.utils.JwtUtil
@@ -27,7 +27,8 @@ class McSsoController @Inject() (
   jwtUtil: JwtUtil,
   sessionTrackingService: SessionTrackingService,
   config: Configuration,
-  addToken: CSRFAddToken
+  addToken: CSRFAddToken,
+  sessionConfig: SessionConfiguration
 )(implicit ec: ExecutionContext) extends BaseController(cc) {
 
   val logger = Logger(this.getClass())
@@ -52,8 +53,23 @@ class McSsoController @Inject() (
       id <- request.session.data.get("id")
     } yield (mid.toLong, userId.toLong, id)
 
-    data.fold(Future.successful(Ok.withNewSession)) { case (mid, userId, id) =>
-      sessionTrackingService.destroy(mid, userId, id).map(_ => Ok.withNewSession)
+    /*
+    This is required due to a play framework bug which when Session is cleared using
+    withNewSession or data map is empty in Session then the play_framework code
+    applies DiscardingCookie which reset the PLAY_SESSION.
+    But DiscardingCookie is not using sameSite settings. So the set-cookie is ignored by browser.
+    For more info pl see the bug:
+    https://github.com/playframework/playframework/issues/10122
+     */
+    val result = Ok.withCookies(Cookie(
+      name = sessionConfig.cookieName,
+      value = "",
+      secure = sessionConfig.secure,
+      sameSite = sessionConfig.sameSite
+    ))
+
+    data.fold(Future.successful(result)) { case (mid, userId, id) =>
+      sessionTrackingService.destroy(mid, userId, id).map(_ => result)
     }
   }
 

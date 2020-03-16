@@ -16,6 +16,7 @@ import pdi.jwt.{Jwt, JwtAlgorithm}
 import play.api.Configuration
 import play.api.libs.json.{JsDefined, JsString}
 import play.api.mvc.{ControllerComponents, Session}
+import play.api.http.SessionConfiguration
 
 import com.salesforce.mce.stargate.controllers.McSsoController
 import com.salesforce.mce.stargate.models.McSsoDecodedJwt
@@ -88,7 +89,8 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
         sessionTrackingService: SessionTrackingService,
         config: Configuration,
         addToken: CSRFAddToken,
-      ) extends McSsoController(cc, jwtUtil, sessionTrackingService, config, addToken) {
+        sessionConfig: SessionConfiguration
+      ) extends McSsoController(cc, jwtUtil, sessionTrackingService, config, addToken, sessionConfig) {
 
         // simulate the case where user's organization has not been enabled
         override protected def preLoginForbiddenCheckCallback(userId: Long, mid: Long): Future[(Boolean, Option[String])] = Future.successful((false, Option(jsonErrorMessage)))
@@ -100,7 +102,8 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
         new JwtUtilImpl(config),
         new SessionTrackingServiceRedisImpl(config),
         config,
-        fakeCSRF(config)
+        fakeCSRF(config),
+        SessionConfiguration()
       )
       val jwt = Jwt.encode(jwtPayload, secretKey, JwtAlgorithm.HS256)
       val response = appController.login.apply(request.withFormUrlEncodedBody(("jwt", jwt)))
@@ -115,8 +118,9 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
         jwtUtil: JwtUtil,
         sessionTrackingService: SessionTrackingService,
         config: Configuration,
-        addToken: CSRFAddToken
-      ) extends McSsoController(cc, jwtUtil, sessionTrackingService, config, addToken) {
+        addToken: CSRFAddToken,
+        sessionConfig: SessionConfiguration
+      ) extends McSsoController(cc, jwtUtil, sessionTrackingService, config, addToken, sessionConfig) {
 
         override protected def postLoginCallback(session: Session, mcSsoDecodedJwt: McSsoDecodedJwt): Future[(Session, String)] = {
           val sessionPostLogin = Session(session.data ++ Map("meme" -> "i see what you did there"))
@@ -131,7 +135,8 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
         new JwtUtilImpl(config),
         new SessionTrackingServiceRedisImpl(config),
         config,
-        fakeCSRF(config)
+        fakeCSRF(config),
+        SessionConfiguration()
       )
       val jwt = Jwt.encode(jwtPayload, secretKey, JwtAlgorithm.HS256)
       val response = appController.login.apply(request.withFormUrlEncodedBody(("jwt", jwt)))
@@ -147,7 +152,7 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
       // Assert that we're getting a cookie for csrf
       val cookieName = config.get[String]("play.filters.csrf.cookie.name")
       cookies(response).get(cookieName).get mustNot be(None)
-      cookies(response).get(cookieName).get.value must not be(null)
+      cookies(response).get(cookieName).get.value must not be (null)
       cookies(response).get(cookieName).get.value.isEmpty must be(false)
 
       redirectLocation(response).get mustBe "https://www.reddit.com/r/corgi/"

@@ -51,11 +51,11 @@ class SessionTrackingServiceRedisImpl @Inject() (config: Configuration)(implicit
     logger.info(s"""Deleting key "$key" in redis.""")
     val status = jedisCluster.del(key)
     logger.info(s"""Status reply when deleting key "$key": $status""")
-    if (status == 1) {
-      logger.info(s"""Successfully destroyed session for key "$key".""")
+    if (status > 0) {
+      logger.info(s"""Successfully cleared session for key "$key".""")
       Future.successful(true)
     } else {
-      logger.error(s"""Failed to destroy session for key "$key". Invalid status "$status" returned.""")
+      logger.info(s"""No session was cleared for key "$key".""")
       Future.successful(false)
     }
   }

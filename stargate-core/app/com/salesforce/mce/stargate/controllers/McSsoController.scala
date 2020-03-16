@@ -16,7 +16,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import play.filters.csrf.CSRFAddToken
-
+import play.api.http.SessionConfiguration
 import com.salesforce.mce.stargate.models.McSsoDecodedJwt
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.utils.JwtUtil
@@ -27,7 +27,8 @@ class McSsoController @Inject() (
   jwtUtil: JwtUtil,
   sessionTrackingService: SessionTrackingService,
   config: Configuration,
-  addToken: CSRFAddToken
+  addToken: CSRFAddToken,
+  sessionConfig: SessionConfiguration
 )(implicit ec: ExecutionContext) extends BaseController(cc) {
 
   val logger = Logger(this.getClass())
@@ -52,8 +53,15 @@ class McSsoController @Inject() (
       id <- request.session.data.get("id")
     } yield (mid.toLong, userId.toLong, id)
 
-    data.fold(Future.successful(Ok.withNewSession)) { case (mid, userId, id) =>
-      sessionTrackingService.destroy(mid, userId, id).map(_ => Ok.withNewSession)
+    val result = Ok.withCookies(Cookie(
+      name = sessionConfig.cookieName,
+      value = "",
+      secure = sessionConfig.secure,
+      sameSite = sessionConfig.sameSite
+    ))
+
+    data.fold(Future.successful(result)) { case (mid, userId, id) =>
+      sessionTrackingService.destroy(mid, userId, id).map(_ => result)
     }
   }
 

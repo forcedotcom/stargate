@@ -53,6 +53,14 @@ class McSsoController @Inject() (
       id <- request.session.data.get("id")
     } yield (mid.toLong, userId.toLong, id)
 
+    /*
+    This is required due to a play framework bug which when Session is cleared using
+    withNewSession or data map is empty in Session then the play_framework code
+    applies DiscardingCookie which reset the PLAY_SESSION.
+    But DiscardingCookie is not using sameSite settings. So the set-cookie is ignored by browser.
+    For more info pl see the bug:
+    https://github.com/playframework/playframework/issues/10122
+     */
     val result = Ok.withCookies(Cookie(
       name = sessionConfig.cookieName,
       value = "",

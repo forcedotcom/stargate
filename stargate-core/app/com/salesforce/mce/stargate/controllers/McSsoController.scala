@@ -64,6 +64,7 @@ class McSsoController @Inject() (
     val result = Ok.withCookies(Cookie(
       name = sessionConfig.cookieName,
       value = "",
+      maxAge = Some(0),   // ensure cookie expires immediately, if not discarded
       secure = sessionConfig.secure,
       sameSite = sessionConfig.sameSite
     ))

@@ -126,6 +126,7 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
           val redirectUrlPostLogin = "https://www.reddit.com/r/corgi/"
 
           mcSsoDecodedJwt.request.rest.mcAccessToken must be(Some("testAccessToken"))
+          mcSsoDecodedJwt.request.rest.mcAccessTokenExp must be(Some(3555))
 
           return Future.successful((sessionPostLogin, redirectUrlPostLogin))
         }

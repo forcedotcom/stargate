@@ -52,7 +52,8 @@ case class McSsoJwtRequestRest(
   authEndpoint: String,
   apiEndpointBase: String,
   refreshToken: String,
-  mcAccessToken: Option[String]
+  mcAccessToken: Option[String],
+  mcAccessTokenExp: Option[Long]
 )
 
 object McSsoJwtRequestRest {
@@ -60,7 +61,8 @@ object McSsoJwtRequestRest {
     (JsPath \ "authEndpoint").read[String] and
     (JsPath \ "apiEndpointBase").read[String] and
     (JsPath \ "refreshToken").read[String] and
-    (JsPath \ "mcAccessToken").readNullable[String]
+    (JsPath \ "mcAccessToken").readNullable[String] and
+    (JsPath \ "mcAccessTokenExp").readNullable[Long]
   )(McSsoJwtRequestRest.apply _)
 }
 

@@ -55,7 +55,8 @@ class JwtUtilImpl @Inject() (config: Configuration) extends JwtUtil {
        |      "authEndpoint": "https://auth-s8.exacttargetapis.com/v1/requestToken",
        |      "apiEndpointBase": "https://www.exacttargetapis.com/",
        |      "refreshToken": "testrefreshtoken",
-       |      "mcAccessToken": "testAccessToken"
+       |      "mcAccessToken": "testAccessToken",
+       |      "mcAccessTokenExp": 3555
        |    },
        |    "organization": {
        |      "id": 8000000,

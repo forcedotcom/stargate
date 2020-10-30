@@ -34,8 +34,7 @@ case class McSsoJwtRequest(
   user: McSsoJwtRequestUser,
   organization: McSsoJwtRequestOrganization,
   application: McSsoJwtRequestApplication,
-  query: Option[McSsoJwtRequestQuery],
-  additionalClaims: Option[McSsoJwtRequestAdditionalClaims]
+  query: Option[McSsoJwtRequestQuery]
 )
 
 object McSsoJwtRequest {
@@ -45,22 +44,23 @@ object McSsoJwtRequest {
     (JsPath \ "user").read[McSsoJwtRequestUser] and
     (JsPath \ "organization").read[McSsoJwtRequestOrganization] and
     (JsPath \ "application").read[McSsoJwtRequestApplication] and
-    (JsPath \ "query").readNullable[McSsoJwtRequestQuery] and
-    (JsPath \ "additionalClaims").readNullable[McSsoJwtRequestAdditionalClaims]
+    (JsPath \ "query").readNullable[McSsoJwtRequestQuery]
   )(McSsoJwtRequest.apply _)
 }
 
 case class McSsoJwtRequestRest(
   authEndpoint: String,
   apiEndpointBase: String,
-  refreshToken: String
+  refreshToken: String,
+  mcAccessToken: Option[String]
 )
 
 object McSsoJwtRequestRest {
   implicit val reads: Reads[McSsoJwtRequestRest] = (
     (JsPath \ "authEndpoint").read[String] and
     (JsPath \ "apiEndpointBase").read[String] and
-    (JsPath \ "refreshToken").read[String]
+    (JsPath \ "refreshToken").read[String] and
+    (JsPath \ "mcAccessToken").readNullable[String]
   )(McSsoJwtRequestRest.apply _)
 }
 
@@ -139,18 +139,4 @@ object McSsoJwtRequestQuery {
     (JsPath \ "deepLink").readNullable[String]
   )(McSsoJwtRequestQuery.apply _)
 }
-
-case class McSsoJwtRequestAdditionalClaims(
-  additionalClaims: Option[Map[String, String]],
-  no_opt: Option[String], //cannot get this solution to work without this placeholder
-)
-
-object McSsoJwtRequestAdditionalClaims {
-  implicit val reads: Reads[McSsoJwtRequestAdditionalClaims] = (
-    (JsPath \ "additionalClaims").readNullable[Map[String, String]] and
-    (JsPath \ "no_opt").readNullable[String]
-  )(McSsoJwtRequestAdditionalClaims.apply _)
-}
-
-
 

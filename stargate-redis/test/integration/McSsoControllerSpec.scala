@@ -1,7 +1,6 @@
 package integration
 
 import javax.inject.Inject
-
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -17,7 +16,7 @@ import play.api.libs.json.{JsDefined, JsString}
 import play.api.mvc.{ControllerComponents, Session}
 import play.api.http.SessionConfiguration
 import com.salesforce.mce.stargate.controllers.McSsoController
-import com.salesforce.mce.stargate.models.{McSsoDecodedJwt, McSsoJwtRequestAdditionalClaims}
+import com.salesforce.mce.stargate.models.{McSsoDecodedJwt}
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.services.impl.SessionTrackingServiceRedisImpl
 import com.salesforce.mce.stargate.utils.{JedisConnection, JwtUtil, JwtUtilImpl}
@@ -126,14 +125,10 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
           val sessionPostLogin = Session(session.data ++ Map("meme" -> "i see what you did there"))
           val redirectUrlPostLogin = "https://www.reddit.com/r/corgi/"
 
-          mcSsoDecodedJwt.request.additionalClaims mustNot be(None)
-          val claims: McSsoJwtRequestAdditionalClaims = mcSsoDecodedJwt.request.additionalClaims.get
-          claims.additionalClaims.get.get("some") must be("thing")
-          claims.additionalClaims.get.get("another") must be("item")
+          mcSsoDecodedJwt.request.rest.mcAccessToken must be(Some("testAccessToken"))
 
           return Future.successful((sessionPostLogin, redirectUrlPostLogin))
         }
-
       }
 
       val appController = new AppMcSsoController(

@@ -54,7 +54,8 @@ class JwtUtilImpl @Inject() (config: Configuration) extends JwtUtil {
        |    "rest": {
        |      "authEndpoint": "https://auth-s8.exacttargetapis.com/v1/requestToken",
        |      "apiEndpointBase": "https://www.exacttargetapis.com/",
-       |      "refreshToken": "testrefreshtoken"
+       |      "refreshToken": "testrefreshtoken",
+       |      "mcAccessToken": "testAccessToken"
        |    },
        |    "organization": {
        |      "id": 8000000,
@@ -69,8 +70,7 @@ class JwtUtilImpl @Inject() (config: Configuration) extends JwtUtil {
        |      "redirectUrl": "https://cool-mc-app.mce.salesforce.com/",
        |      "features": {},
        |      "userPermissions": []
-       |    },
-       |    "additionalClaims": [{"some": "thing"}, {"another": "item"}]
+       |    }
        |  }
        |}
        """.stripMargin

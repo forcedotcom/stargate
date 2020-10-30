@@ -69,7 +69,8 @@ class JwtUtilImpl @Inject() (config: Configuration) extends JwtUtil {
        |      "redirectUrl": "https://cool-mc-app.mce.salesforce.com/",
        |      "features": {},
        |      "userPermissions": []
-       |    }
+       |    },
+       |    "additionalClaims": [{"some": "thing"}, {"another": "item"}]
        |  }
        |}
        """.stripMargin

@@ -5,7 +5,6 @@ import javax.inject.Inject
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play._
@@ -17,15 +16,16 @@ import play.api.Configuration
 import play.api.libs.json.{JsDefined, JsString}
 import play.api.mvc.{ControllerComponents, Session}
 import play.api.http.SessionConfiguration
-
 import com.salesforce.mce.stargate.controllers.McSsoController
-import com.salesforce.mce.stargate.models.McSsoDecodedJwt
+import com.salesforce.mce.stargate.models.{McSsoDecodedJwt, McSsoJwtRequestAdditionalClaims}
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.services.impl.SessionTrackingServiceRedisImpl
 import com.salesforce.mce.stargate.utils.{JedisConnection, JwtUtil, JwtUtilImpl}
 import play.api.http.{SecretConfiguration, SessionConfiguration}
 import play.api.libs.crypto.{CSRFTokenSignerProvider, DefaultCookieSigner}
 import play.filters.csrf.{CSRFAddToken, CSRFConfig}
+
+import scala.collection.immutable.Map
 
 class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
   val config = Configuration(ConfigFactory.load())
@@ -125,6 +125,12 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
         override protected def postLoginCallback(session: Session, mcSsoDecodedJwt: McSsoDecodedJwt): Future[(Session, String)] = {
           val sessionPostLogin = Session(session.data ++ Map("meme" -> "i see what you did there"))
           val redirectUrlPostLogin = "https://www.reddit.com/r/corgi/"
+
+          mcSsoDecodedJwt.request.additionalClaims mustNot be(None)
+          val claims: McSsoJwtRequestAdditionalClaims = mcSsoDecodedJwt.request.additionalClaims.get
+          claims.additionalClaims.get.get("some") must be("thing")
+          claims.additionalClaims.get.get("another") must be("item")
+
           return Future.successful((sessionPostLogin, redirectUrlPostLogin))
         }
 
@@ -181,5 +187,4 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
     }
 
   }
-
 }

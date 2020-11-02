@@ -52,8 +52,8 @@ case class McSsoJwtRequestRest(
   authEndpoint: String,
   apiEndpointBase: String,
   refreshToken: String,
-  mcAccessToken: Option[String],
-  mcAccessTokenExp: Option[Long]
+  mcAccessToken: Option[String] = None,
+  mcAccessTokenExp: Option[Long] = None
 )
 
 object McSsoJwtRequestRest {

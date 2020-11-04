@@ -5,27 +5,28 @@ import javax.inject.Inject
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.collection.immutable.Map
+
+import play.api.test.Helpers._
+import play.api.test._
+import play.api.Configuration
+import play.api.libs.json.{JsDefined, JsString}
+import play.api.mvc.{ControllerComponents, Session}
+import play.api.http.{SecretConfiguration, SessionConfiguration}
+import play.api.libs.crypto.{CSRFTokenSignerProvider, DefaultCookieSigner}
+import play.filters.csrf.{CSRFAddToken, CSRFConfig}
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.test.Helpers._
-import play.api.test._
 import pdi.jwt.{Jwt, JwtAlgorithm}
-import play.api.Configuration
-import play.api.libs.json.{JsDefined, JsString}
-import play.api.mvc.{ControllerComponents, Session}
-import play.api.http.SessionConfiguration
 
 import com.salesforce.mce.stargate.controllers.McSsoController
-import com.salesforce.mce.stargate.models.McSsoDecodedJwt
+import com.salesforce.mce.stargate.models.{McSsoDecodedJwt}
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.services.impl.SessionTrackingServiceRedisImpl
 import com.salesforce.mce.stargate.utils.{JedisConnection, JwtUtil, JwtUtilImpl}
-import play.api.http.{SecretConfiguration, SessionConfiguration}
-import play.api.libs.crypto.{CSRFTokenSignerProvider, DefaultCookieSigner}
-import play.filters.csrf.{CSRFAddToken, CSRFConfig}
 
 class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
   val config = Configuration(ConfigFactory.load())
@@ -47,7 +48,7 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
   "sso/mc/login" should {
     val request = FakeRequest(POST, "/sso/mc/login")
     val secretKey = "changeme"
-    val jwtPayload = new JwtUtilImpl(Configuration(ConfigFactory.load())).mockDecodedJwt
+    val jwtPayload = new JwtUtilImpl(Configuration(ConfigFactory.load())).mockDecodedJwt(true)
 
     "be a 303 with JWT" in {
       val jwt = Jwt.encode(jwtPayload, secretKey, JwtAlgorithm.HS256)
@@ -125,9 +126,12 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
         override protected def postLoginCallback(session: Session, mcSsoDecodedJwt: McSsoDecodedJwt): Future[(Session, String)] = {
           val sessionPostLogin = Session(session.data ++ Map("meme" -> "i see what you did there"))
           val redirectUrlPostLogin = "https://www.reddit.com/r/corgi/"
+
+          mcSsoDecodedJwt.request.rest.mcAccessToken must be(Some("testAccessToken"))
+          mcSsoDecodedJwt.request.rest.mcAccessTokenExp must be(Some(3555))
+
           return Future.successful((sessionPostLogin, redirectUrlPostLogin))
         }
-
       }
 
       val appController = new AppMcSsoController(
@@ -181,5 +185,4 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
     }
 
   }
-
 }

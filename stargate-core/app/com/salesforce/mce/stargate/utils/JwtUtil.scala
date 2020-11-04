@@ -19,7 +19,7 @@ trait JwtUtil {
 
   def mockJwt(): String
 
-  def mockDecodedJwt(): String
+  def mockDecodedJwt(shouldIncludeMCAccessToken: Boolean = true): String
 }
 
 @Singleton
@@ -33,49 +33,97 @@ class JwtUtilImpl @Inject() (config: Configuration) extends JwtUtil {
     case None       => Seq(secretKey)
   }
 
-  override def mockDecodedJwt: String =
-    s"""
-       | {
-       |  "exp": ${System.currentTimeMillis()},
-       |  "jti": "JT-IXXXXXXXXXXXXXXXXXXXXXXX",
-       |  "request": {
-       |    "claimsVersion": 2,
-       |    "user": {
-       |      "id": 1111118,
-       |      "email": "stargate@salesforce.com",
-       |      "culture": "en-US",
-       |      "timezone": {
-       |        "longName": "(GMT+08:00) Kuala Lumpur, Singapore",
-       |        "shortName": "GMT+8",
-       |        "offset": 8.0,
-       |        "dst": false
-       |      }
-       |    },
-       |    "rest": {
-       |      "authEndpoint": "https://auth-s8.exacttargetapis.com/v1/requestToken",
-       |      "apiEndpointBase": "https://www.exacttargetapis.com/",
-       |      "refreshToken": "testrefreshtoken"
-       |    },
-       |    "organization": {
-       |      "id": 8000000,
-       |      "enterpriseId": 9000000,
-       |      "dataContext": "enterprise",
-       |      "stackKey": "S8",
-       |      "region": "NA1"
-       |    },
-       |    "application": {
-       |      "id": "appidxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-       |      "package": "apppacka-gexx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-       |      "redirectUrl": "https://cool-mc-app.mce.salesforce.com/",
-       |      "features": {},
-       |      "userPermissions": []
-       |    }
-       |  }
-       |}
+  override def mockDecodedJwt(shouldIncludeMCAccessToken: Boolean = true): String =
+    shouldIncludeMCAccessToken match {
+      //when true - return the mcAccessToken and mcAccessTokenExp in the rest claim section
+      case true =>
+        s"""
+           | {
+           |  "exp": ${System.currentTimeMillis()},
+           |  "jti": "JT-IXXXXXXXXXXXXXXXXXXXXXXX",
+           |  "request": {
+           |    "claimsVersion": 2,
+           |    "user": {
+           |      "id": 1111118,
+           |      "email": "stargate@salesforce.com",
+           |      "culture": "en-US",
+           |      "timezone": {
+           |        "longName": "(GMT+08:00) Kuala Lumpur, Singapore",
+           |        "shortName": "GMT+8",
+           |        "offset": 8.0,
+           |        "dst": false
+           |      }
+           |    },
+           |    "rest": {
+           |      "authEndpoint": "https://auth-s8.exacttargetapis.com/v1/requestToken",
+           |      "apiEndpointBase": "https://www.exacttargetapis.com/",
+           |      "refreshToken": "testrefreshtoken",
+           |      "mcAccessToken": "testAccessToken",
+           |      "mcAccessTokenExp": 3555
+           |    },
+           |    "organization": {
+           |      "id": 8000000,
+           |      "enterpriseId": 9000000,
+           |      "dataContext": "enterprise",
+           |      "stackKey": "S8",
+           |      "region": "NA1"
+           |    },
+           |    "application": {
+           |      "id": "appidxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+           |      "package": "apppacka-gexx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+           |      "redirectUrl": "https://cool-mc-app.mce.salesforce.com/",
+           |      "features": {},
+           |      "userPermissions": []
+           |    }
+           |  }
+           |}
        """.stripMargin
 
+      //when false do not include the mcAccessToken or mcAccessTokenExp
+      case _ =>
+        s"""
+           | {
+           |  "exp": ${System.currentTimeMillis()},
+           |  "jti": "JT-IXXXXXXXXXXXXXXXXXXXXXXX",
+           |  "request": {
+           |    "claimsVersion": 2,
+           |    "user": {
+           |      "id": 1111118,
+           |      "email": "stargate@salesforce.com",
+           |      "culture": "en-US",
+           |      "timezone": {
+           |        "longName": "(GMT+08:00) Kuala Lumpur, Singapore",
+           |        "shortName": "GMT+8",
+           |        "offset": 8.0,
+           |        "dst": false
+           |      }
+           |    },
+           |    "rest": {
+           |      "authEndpoint": "https://auth-s8.exacttargetapis.com/v1/requestToken",
+           |      "apiEndpointBase": "https://www.exacttargetapis.com/",
+           |      "refreshToken": "testrefreshtoken"
+           |    },
+           |    "organization": {
+           |      "id": 8000000,
+           |      "enterpriseId": 9000000,
+           |      "dataContext": "enterprise",
+           |      "stackKey": "S8",
+           |      "region": "NA1"
+           |    },
+           |    "application": {
+           |      "id": "appidxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+           |      "package": "apppacka-gexx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+           |      "redirectUrl": "https://cool-mc-app.mce.salesforce.com/",
+           |      "features": {},
+           |      "userPermissions": []
+           |    }
+           |  }
+           |}
+       """.stripMargin
+    }
+
   override def mockJwt(): String = {
-    encode(mockDecodedJwt)
+    encode(mockDecodedJwt(true))
   }
 
   override def decode(jwt: String): Try[(String, String, String)] = {

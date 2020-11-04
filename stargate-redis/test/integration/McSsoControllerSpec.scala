@@ -1,30 +1,32 @@
 package integration
 
 import javax.inject.Inject
+
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.collection.immutable.Map
+
+import play.api.test.Helpers._
+import play.api.test._
+import play.api.Configuration
+import play.api.libs.json.{JsDefined, JsString}
+import play.api.mvc.{ControllerComponents, Session}
+import play.api.http.{SecretConfiguration, SessionConfiguration}
+import play.api.libs.crypto.{CSRFTokenSignerProvider, DefaultCookieSigner}
+import play.filters.csrf.{CSRFAddToken, CSRFConfig}
+
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.test.Helpers._
-import play.api.test._
 import pdi.jwt.{Jwt, JwtAlgorithm}
-import play.api.Configuration
-import play.api.libs.json.{JsDefined, JsString}
-import play.api.mvc.{ControllerComponents, Session}
-import play.api.http.SessionConfiguration
+
 import com.salesforce.mce.stargate.controllers.McSsoController
 import com.salesforce.mce.stargate.models.{McSsoDecodedJwt}
 import com.salesforce.mce.stargate.services.SessionTrackingService
 import com.salesforce.mce.stargate.services.impl.SessionTrackingServiceRedisImpl
 import com.salesforce.mce.stargate.utils.{JedisConnection, JwtUtil, JwtUtilImpl}
-import play.api.http.{SecretConfiguration, SessionConfiguration}
-import play.api.libs.crypto.{CSRFTokenSignerProvider, DefaultCookieSigner}
-import play.filters.csrf.{CSRFAddToken, CSRFConfig}
-
-import scala.collection.immutable.Map
 
 class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
   val config = Configuration(ConfigFactory.load())

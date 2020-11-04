@@ -48,6 +48,18 @@ object McSsoJwtRequest {
   )(McSsoJwtRequest.apply _)
 }
 
+/** Encapsulates Marketing Cloud REST based claims. Two optional params (mcAccessToken & mcAccessTokenExp) have been
+ *  added as of version 0.14.5 which are not outlined in the Field Reference for Decoded JWT:
+ *  https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-app-development.meta/mc-app-development/explanation-decoded-jwt.htm
+ *  These two jwt claim properties must be injected and the JWT resigned to become available and are not part
+ *  of the standard JWT Marketing Cloud provides upon login.
+ *
+ *  @param authEndpoint The Marketing Cloud authentication endpoint
+ *  @param apiEndpointBase The Marketing Cloud API endpoint base
+ *  @param refreshToken A token to request a Marketing Cloud Access Token when used with an app's clientId and clientSecret
+ *  @param mcAccessToken [Optional] Marketing Cloud Access token to be captured if injected into the JWT REST claim.
+ *  @param mcAccessTokenExp [Optional] expiry time in seconds for the Marketing Cloud Access token if provided.
+ */
 case class McSsoJwtRequestRest(
   authEndpoint: String,
   apiEndpointBase: String,

@@ -48,7 +48,7 @@ class McSsoControllerSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAn
   "sso/mc/login" should {
     val request = FakeRequest(POST, "/sso/mc/login")
     val secretKey = "changeme"
-    val jwtPayload = new JwtUtilImpl(Configuration(ConfigFactory.load())).mockDecodedJwt
+    val jwtPayload = new JwtUtilImpl(Configuration(ConfigFactory.load())).mockDecodedJwt(true)
 
     "be a 303 with JWT" in {
       val jwt = Jwt.encode(jwtPayload, secretKey, JwtAlgorithm.HS256)

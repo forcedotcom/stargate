@@ -86,14 +86,14 @@ lazy val commonSettings = Seq(
     "-Ywarn-value-discard",
     "-Ywarn-infer-any"
   ),
-  doc in Compile := target.map(_ / "none").value
+  Compile / doc := target.map(_ / "none").value
 ) ++ publishSettings
 
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "stargate",
-    skip in publish := true
+    publish / skip := true
   ).
   aggregate(core, redis)
 
@@ -106,7 +106,7 @@ lazy val core = (project in file("stargate-core")).
 
     javaOptions += "-Dconfig.resource=stargate-core.application.conf",
 
-    javaOptions in Test ++= Seq(
+    Test / javaOptions ++= Seq(
       "-Dconfig.resource=stargate-core.test.conf",
       "-Dlogger.resource=logback-test.xml"
     )
@@ -124,7 +124,7 @@ lazy val redis = (project in file("stargate-redis")).
     libraryDependencies ++= Seq(
       jedis
     ),
-    javaOptions in Test ++= Seq(
+    Test / javaOptions ++= Seq(
       s"-Dconfig.resource=stargate-redis.${testEnv}.conf",
       "-Dlogger.resource=logback-test.xml"
     )

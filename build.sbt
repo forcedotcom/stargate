@@ -65,6 +65,14 @@ lazy val commonSettings = Seq(
     mockito % Test,
     playScalaTest % Test
   ),
+  dependencyOverrides ++= Seq(
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.6.1",
+    "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor" % "2.12.6",
+    "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % "2.12.6",
+    "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.12.6",
+    "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % "2.12.6",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.6"
+  ),
   scalariformAutoformat := true,
   ScalariformKeys.preferences := ScalariformKeys.preferences.value
     .setPreference(AlignSingleLineCaseStatements, true)

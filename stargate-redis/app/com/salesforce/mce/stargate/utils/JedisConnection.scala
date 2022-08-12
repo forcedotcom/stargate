@@ -32,10 +32,21 @@ object JedisConnection {
     }
     val clusterNodes = JavaConverters.setAsJavaSet(hostsAndPortsAndPasswords.map(_._1).toSet)
     hostsAndPortsAndPasswords(0)._2 match {
-      case Some(password) => new JedisCluster(clusterNodes, defaultTimeoutMilis, defaultTimeoutMilis,
-        defaultMaxAttempts, password, new GenericObjectPoolConfig())
-      case _ => new JedisCluster(clusterNodes, defaultTimeoutMilis, defaultTimeoutMilis, defaultMaxAttempts,
-        new GenericObjectPoolConfig())
+      case Some(password) => new JedisCluster(
+        clusterNodes,
+        defaultTimeoutMilis,
+        defaultTimeoutMilis,
+        defaultMaxAttempts,
+        password,
+        new GenericObjectPoolConfig[Connection]()
+      )
+      case _ => new JedisCluster(
+        clusterNodes,
+        defaultTimeoutMilis,
+        defaultTimeoutMilis,
+        defaultMaxAttempts,
+        new GenericObjectPoolConfig[Connection]()
+      )
     }
   }
 

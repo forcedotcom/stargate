@@ -31,7 +31,7 @@ class SessionTrackingServiceRedisImplSpec extends PlaySpec with GuiceOneAppPerSu
   val mid = 10773761L
   val userId = 11012446L
   val sid = "fake-sid-uuid"
-  val sessionTimeoutInSeconds = config.get[FiniteDuration]("play.http.session.maxAge").toSeconds.toInt
+  val sessionTimeoutInSeconds = config.get[FiniteDuration]("play.http.session.maxAge").toSeconds
   val jedis = JedisConnection.cluster
 
   def createService() = new SessionTrackingServiceRedisImpl(config)

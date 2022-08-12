@@ -74,7 +74,7 @@ lazy val commonSettings = Seq(
     .setPreference(SpacesWithinPatternBinders, false)
     .setPreference(SpacesAroundMultiImports, false)
     .setPreference(DanglingCloseParenthesis, Force),
-  scalaVersion := "2.12.4",
+  scalaVersion := "2.12.16",
   scalacOptions ++= Seq(
     "-encoding", "UTF-8",
     "-unchecked",

@@ -26,7 +26,7 @@ class SessionTrackingServiceRedisImpl @Inject() (config: Configuration)(implicit
   val redisStatusOk = "OK"
 
   val logger = Logger(this.getClass())
-  val sessionTimeoutInSeconds = config.get[FiniteDuration]("play.http.session.maxAge").toSeconds.toInt
+  val sessionTimeoutInSeconds = config.get[FiniteDuration]("play.http.session.maxAge").toSeconds
   val jedisCluster = JedisConnection.cluster
 
   override def create(mid: Long, userId: Long): Future[Option[String]] = {

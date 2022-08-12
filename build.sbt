@@ -1,6 +1,4 @@
-import scalariform.formatter.preferences._
 import Dependencies._
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import sbt.Keys.javaOptions
 
 val ci = sys.env.getOrElse("CI", "false").toBoolean
@@ -65,15 +63,6 @@ lazy val commonSettings = Seq(
     mockito % Test,
     playScalaTest % Test
   ),
-  scalariformAutoformat := true,
-  ScalariformKeys.preferences := ScalariformKeys.preferences.value
-    .setPreference(AlignSingleLineCaseStatements, true)
-    .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-    .setPreference(NewlineAtEndOfFile, true)
-    .setPreference(SingleCasePatternOnNewline, false)
-    .setPreference(SpacesWithinPatternBinders, false)
-    .setPreference(SpacesAroundMultiImports, false)
-    .setPreference(DanglingCloseParenthesis, Force),
   scalaVersion := "2.12.16",
   scalacOptions ++= Seq(
     "-encoding", "UTF-8",

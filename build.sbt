@@ -63,7 +63,7 @@ lazy val commonSettings = Seq(
     mockito % Test,
     playScalaTest % Test
   ),
-  scalaVersion := "2.12.16",
+  scalaVersion := "2.12.18",
   scalacOptions ++= Seq(
     "-encoding", "UTF-8",
     "-unchecked",

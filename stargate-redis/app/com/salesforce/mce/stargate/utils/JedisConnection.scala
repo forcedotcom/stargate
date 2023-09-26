@@ -24,6 +24,8 @@ object JedisConnection {
   val config = Configuration(ConfigFactory.load())
   val clusterNodeUrls = config.get[Seq[String]]("com.salesforce.mce.stargate.redis.clusterNodeUrls")
 
+  println(clusterNodeUrls)
+
   val cluster: JedisCluster = {
     val hostsAndPortsAndPasswords: Seq[(HostAndPort, Option[String])] = clusterNodeUrls.map { url =>
       val uri = new URI(url)

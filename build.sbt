@@ -5,9 +5,7 @@ val ci = sys.env.getOrElse("CI", "false").toBoolean
 
 val testEnv = if (ci) "ci" else "test"
 
-lazy val scala212 = "2.12.18" 
 lazy val scala213 = "2.13.14"
-lazy val supportedScalaVersions = List(scala212, scala213)
 
 lazy val publishSettings = Seq(
   organization := "com.salesforce.mce",
@@ -67,17 +65,14 @@ lazy val commonSettings = Seq(
     mockito % Test,
     playScalaTest % Test
   ),
-  scalaVersion := scala212,
+  scalaVersion := scala213,
   scalacOptions ++= Seq(
     "-encoding", "UTF-8",
     "-unchecked",
-    "-Xfuture",
     "-Xlint:-unused,_",
-    "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
-    "-Ywarn-value-discard",
-    "-Ywarn-infer-any"
+    "-Ywarn-value-discard"
   ),
   Compile / doc := target.map(_ / "none").value
 ) ++ publishSettings
@@ -86,7 +81,6 @@ lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "stargate",
-    crossScalaVersions := Nil,
     publish / skip := true
   ).
   aggregate(core, redis)
@@ -99,8 +93,6 @@ lazy val core = (project in file("stargate-core")).
     description := "Scala Play module for integrating Marketing Cloud Single Sign On",
 
     javaOptions += "-Dconfig.resource=stargate-core.application.conf",
-
-    crossScalaVersions := supportedScalaVersions,
 
     Test / javaOptions ++= Seq(
       "-Dconfig.resource=stargate-core.test.conf",
@@ -116,8 +108,6 @@ lazy val redis = (project in file("stargate-redis")).
     description := "Stargate Scala Play module with Redis as session store",
 
     javaOptions += "-Dconfig.resource=stargate-redis.application.conf",
-
-    crossScalaVersions := supportedScalaVersions,
 
     libraryDependencies ++= Seq(
       jedis

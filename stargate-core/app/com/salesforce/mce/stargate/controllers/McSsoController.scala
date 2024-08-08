@@ -29,7 +29,7 @@ class McSsoController @Inject() (
   config: Configuration,
   addToken: CSRFAddToken,
   sessionConfig: SessionConfiguration
-)(implicit ec: ExecutionContext) extends BaseController(cc) {
+)(implicit ec: ExecutionContext) extends com.salesforce.mce.stargate.controllers.BaseController(cc) {
 
   val logger = Logger(this.getClass())
   val isDevLoginEnabled = config.get[Boolean]("com.salesforce.mce.stargate.isDevLoginEnabled")
@@ -144,7 +144,7 @@ class McSsoController @Inject() (
             val userInfoForLogging = newSessionPostCallback.data.filterKeys(
               Set("id", "userId", "mid", "eid")
             )
-            log(true, request, userInfoForLogging)
+            log(true, request, userInfoForLogging.toMap)
             Redirect(redirectUrlPostCallback).withSession(newSessionPostCallback)
           }
         }.getOrElse(Future.successful(InternalServerError(Json.obj("error" -> "Unable to create session"))))

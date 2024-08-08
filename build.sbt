@@ -81,6 +81,7 @@ lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "stargate",
+    crossScalaVersions := Nil,
     publish / skip := true
   ).
   aggregate(core, redis)
@@ -93,6 +94,8 @@ lazy val core = (project in file("stargate-core")).
     description := "Scala Play module for integrating Marketing Cloud Single Sign On",
 
     javaOptions += "-Dconfig.resource=stargate-core.application.conf",
+
+    crossScalaVersions := supportedScalaVersions,
 
     Test / javaOptions ++= Seq(
       "-Dconfig.resource=stargate-core.test.conf",
@@ -108,6 +111,8 @@ lazy val redis = (project in file("stargate-redis")).
     description := "Stargate Scala Play module with Redis as session store",
 
     javaOptions += "-Dconfig.resource=stargate-redis.application.conf",
+
+    crossScalaVersions := supportedScalaVersions,
 
     libraryDependencies ++= Seq(
       jedis

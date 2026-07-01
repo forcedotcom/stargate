@@ -40,11 +40,15 @@ lazy val publishSettings = Seq(
   licenses := List("BSD-3-Clause" -> new URL("https://opensource.org/licenses/BSD-3-Clause")),
   homepage := Some(url("https://github.com/forcedotcom/stargate")),
   pomIncludeRepository := { _ => false },
-  publishTo := sonatypePublishToBundle.value,
+  publishTo := {
+    val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+    if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
+    else localStaging.value
+  },
   publishMavenStyle := true,
   credentials += Credentials(
-    "Sonatype Nexus Repository Manager",
-    "oss.sonatype.org",
+    "Sonatype Central Portal",
+    "central.sonatype.com",
     sys.env.getOrElse("SONATYPE_USERNAME",""),
     sys.env.getOrElse("SONATYPE_PASSWORD","")
   ),

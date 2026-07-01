@@ -19,3 +19,6 @@ terraform.tfstate.*.backup
 !.tflint.tfvars
 .sw[a-p]
 .*.sw[a-p]
+.metals
+.bloop
+metals.sbt
